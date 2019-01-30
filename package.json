@@ -1,0 +1,35 @@
+{
+  "name": "cordova-plugin-streaming-video-live",
+  "version": "1.0.0",
+  "description": "Plugin for streaming on live.",
+  "cordova": {
+    "id": "cordova-plugin-streaming-video-live",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Leo1305Pineda/cordova-plugin-streaming-video-live.git"
+  },
+  "keywords": [
+    "Android",
+    "Streaming",
+    "Video",
+    "RSTP",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "engines": [
+    {
+      "name": "cordova-android",
+      "version": ">=3.0.0"
+    }
+  ],
+  "author": "Leo1305Pineda",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Leo1305Pineda/cordova-plugin-streaming-video-live/issues"
+  },
+  "homepage": "https://github.com/Leo1305Pineda/cordova-plugin-streaming-video-live#readme"
+}

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-streaming-video-live"
+        version="1.0.0">
+
+    <name>StreamingVideoLive</name>
+    <description>Plugin for streaming on live.</description>
+    <author>Leonardo Pineda</author>
+    <keywords>Android, Streaming, Video, rtsp</keywords>
+    <license>MIT</license>
+
+    <js-module src="www/StreamingVideoLive.js" name="StreamingVideoLive">
+        <clobbers target="StreamingVideoLive" />
+    </js-module>
+    <engines>
+        <engine name="cordova-android" version=">=3.0.0"/>
+    </engines>
+
+    <platform name="android">
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.FLASHLIGHT" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.RECORD_AUDIO" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.CAMERA" />
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-feature android:name="android.hardware.camera"/>    
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-feature android:name="android.hardware.camera2.full"/>        
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-feature android:name="android.hardware.camera2.autofocus"/>
+        </config-file>
+
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="StreamingVideoLive" >
+                <param 
+                    name="android-package" 
+                    value="com.streamingvideolive.cordova.plugins.StreamingVideoLive"/>
+            </feature>
+        </config-file>
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/StreamingVideoLive.java" 
+            target-dir="src/com/streamingvideolive/cordova/plugins" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/layout/activity_stream_rtsp.xml" 
+            target-dir="res/layout" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/values/attrs.xml" 
+            target-dir="res/values" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/values/colors.xml" 
+            target-dir="res/values" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/raw/simple_vertex.glsl" 
+            target-dir="res/raw" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/raw/simple_fragment.glsl" 
+            target-dir="res/raw" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/raw/camera_fragment.glsl" 
+            target-dir="res/raw" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/raw/fxaa.glsl" 
+            target-dir="res/raw" />
+
+        <config-file 
+            target="AndroidManifest.xml" 
+            parent="/manifest/application">
+            <activity
+                android:name="com.streamingvideolive.cordova.plugins.StreamRTSP"
+                android:screenOrientation="portrait"
+                android:label="Stream RTSP"></activity>
+        </config-file>
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/StreamRTSP.java" 
+            target-dir="src/com/streamingvideolive/cordova/plugins" />
+
+        <!-- target-dir rtplibrary base -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/base/Camera1Base.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/base" />
+
+        <!-- target-dir rtplibrary base rtsp-->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/rtsp/RtspCamera1.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/rtsp" />
+
+        <!-- target-dir rtplibrary view -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/view/Filter.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/view" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/view/GlInterface.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/view" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/view/LightOpenGlView.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/view" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/view/OffScreenGlThread.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/view" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/view/OpenGlView.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/view" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/view/OpenGlViewBase.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/view" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtplibrary/view/TakePhotoCallback.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtplibrary/view" />
+
+        <!-- target-dir encoder audio -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/audio/AudioEncoder.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/audio" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/audio/GetAacData.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/audio" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/audio/DataTaken.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/audio" />
+
+        <!-- target-dir encoder imput audio -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/audio/AudioPostProcessEffect.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/audio" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/audio/GetMicrophoneData.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/audio" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/audio/MicrophoneManager.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/audio" />
+
+        <!-- target-dir encoder imput gl -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/SurfaceManager.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl" />
+
+        <!-- target-dir encoder imput gl render-->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/BaseRenderOffScreen.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/CameraRender.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/ManagerRender.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/RenderHandler.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/ScreenRender.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/SimpleCameraRender.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render" />
+
+        <!-- target-dir encoder imput gl render filters-->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/filters/BaseFilterRender.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/filters" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/filters/NoFilterRender.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/gl/render/filters" />
+
+        <!-- target-dir encoder imput video -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/video/Camera1ApiManager.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/video" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/video/CameraHelper.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/video" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/video/CameraOpenException.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/video" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/video/FpsLimiter.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/video" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/video/Frame.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/video" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/input/video/GetCameraData.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/input/video" />
+
+        <!-- target-dir encoder utils -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/utils/CodecUtil.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/utils" />
+
+        <!-- target-dir encoder utils gl -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/utils/gl/GlUtil.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/utils/gl" />
+
+        <!-- target-dir encoder utils yuv -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/utils/yuv/NV21Utils.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/utils/yuv" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/utils/yuv/YUVUtil.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/utils/yuv" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/utils/yuv/YV12Utils.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/utils/yuv" />
+
+        <!-- target-dir encoder video -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/video/FormatVideoEncoder.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/video" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/video/GetVideoData.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/video" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/encoder/video/VideoEncoder.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/encoder/video" />
+
+        <!-- target-dir rtsp rtcp -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtcp/BaseSenderReport.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtcp" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtcp/SenderReportTcp.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtcp" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtcp/SenderReportUdp.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtcp" />
+
+        <!-- target-dir rtsp rtp packets -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets/AacPacket.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets/AudioPacketCallback.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets/BasePacket.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets/H264Packet.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets/H265Packet.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets/VideoPacketCallback.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/packets" />
+
+        <!-- target-dir rtsp rtp sockets -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/sockets/BaseRtpSocket.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/sockets" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/sockets/RtpSocketTcp.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/sockets" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/sockets/RtpSocketUdp.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtp/sockets" />
+
+        <!-- target-dir rtsp rtsp -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp/Body.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp/Protocol.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp/RtpFrame.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp/RtspClient.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp/RtspSender.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp/VideoCodec.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/rtsp" />
+
+        <!-- target-dir rtsp utils -->
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/utils/AuthUtil.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/utils" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/utils/ConnectCheckerRtsp.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/utils" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/utils/CreateSSLSocket.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/utils" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/utils/RtpConstants.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/utils" />
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/rtsp/utils/TLSSocketFactory.java"
+            target-dir="src/com/streamingvideolive/cordova/plugins/rtsp/utils" />
+            
+    </platform>
+</plugin>
