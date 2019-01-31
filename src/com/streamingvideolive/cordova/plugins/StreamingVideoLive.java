@@ -15,30 +15,57 @@ import org.json.JSONArray;
 
 public class StreamingVideoLive extends CordovaPlugin {
 
+    private static final String TAG = StreamingVideoLive.class.getSimpleName();
+
     private static final String STEAMING_START = "streaming";
 
     private static final int ACTIVITY_CODE_STREAM = 7;
 
-    private CallbackContext callbackContext;
+    private static final String CAMERA          = Manifest.permission.CAMERA;
+    private static final String FLASHLIGHT      = Manifest.permission.FLASHLIGHT;
+    private static final String RECORD_AUDIO    = Manifest.permission.RECORD_AUDIO;
+    private static final int REQ_CODE = 500;
 
-    private static final String TAG = StreamingVideoLive.class.getSimpleName();
+    private String[] permissions = {
+        CAMERA, 
+        FLASHLIGHT, 
+        RECORD_AUDIO
+    };
+
+    private CallbackContext callbackContext;
+    private String _action;
+    private JSONArray _args;
 
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
-
+        return runSwitch(action, args);
+/*
         if (STEAMING_START.equals(action)) {
             return this.stream();
         }  else {
             callbackContext.error("streamingVideoLive." + action + " is not a supported method.");
             return false;
         }
+        */
     }
 
-    private boolean stream() {
-        return run(StreamRTSP.class);
+    public boolean runSwitch(String action, JSONArray args) {
+        _action = action;
+        _args = args;
+        if(hasPermission()) {
+            switch (action) {
+                case STEAMING_START: streamRTSP(StreamRTSP.class);
+                return true;
+            }
+        } else {
+            readPermission(REQ_CODE);
+            return true;
+        }
+        callbackContext.error("streamingVideoLive." + action + " is not a supported method.");
+        return false; 
     }
 
-    private boolean run(final Class activityClass) {
+    private boolean streamRTSP(final Class activityClass) {
         final CordovaInterface cordovaObj = cordova;
         final CordovaPlugin plugin = this;
 
@@ -74,6 +101,34 @@ public class StreamingVideoLive extends CordovaPlugin {
             }
         });
         return true;
+    }
+
+    public boolean hasPermission() {
+        return ( cordova.hasPermission(CAMERA) &&
+            cordova.hasPermission(FLASHLIGHT) &&
+            cordova.hasPermission(RECORD_AUDIO))
+    }
+
+    private void readPermission(int requestCode) {
+        cordova.requestPermissions(this, requestCode, permissions);
+    }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+        int i = 0;
+        for (int r : grantResults) {
+            if (r == PackageManager.PERMISSION_DENIED) {
+                this.callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, PERMISSION_DENIED_ERROR +
+                        " Request Code: " + REQ_CODE + ", Actions: " + _action + ", Permission: " + permissions[i]));
+                callbackContext.error("streamingVideoLive: " +  permissions[i] + " permissions denied.");
+                return;
+            }
+            i++;
+        }
+
+        if (requestCode == REQ_CODE) {
+            this.runSwitch(_action, _args);
+        }
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {

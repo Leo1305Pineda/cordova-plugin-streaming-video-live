@@ -6,7 +6,7 @@
         version="1.0.0">
 
     <name>StreamingVideoLive</name>
-    <description>Plugin for streaming on live.</description>
+    <description>Plugin video streaming on live.</description>
     <author>Leonardo Pineda</author>
     <keywords>Android, Streaming, Video, rtsp</keywords>
     <license>MIT</license>
