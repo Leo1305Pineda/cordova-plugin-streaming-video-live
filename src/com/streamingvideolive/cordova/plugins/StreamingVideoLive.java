@@ -1,9 +1,11 @@
 package com.streamingvideolive.cordova.plugins;
 
+import android.Manifest;
 import android.content.Intent;
 
 import android.app.Activity;
 
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
@@ -12,6 +14,7 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 public class StreamingVideoLive extends CordovaPlugin {
 
@@ -22,14 +25,15 @@ public class StreamingVideoLive extends CordovaPlugin {
     private static final int ACTIVITY_CODE_STREAM = 7;
 
     private static final String CAMERA          = Manifest.permission.CAMERA;
-    private static final String FLASHLIGHT      = Manifest.permission.FLASHLIGHT;
     private static final String RECORD_AUDIO    = Manifest.permission.RECORD_AUDIO;
+    private static final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    private static final String PERMISSION_DENIED_ERROR = "Permissions denied.";
     private static final int REQ_CODE = 500;
 
     private String[] permissions = {
-        CAMERA, 
-        FLASHLIGHT, 
-        RECORD_AUDIO
+        CAMERA,
+        RECORD_AUDIO,
+        WRITE_EXTERNAL_STORAGE
     };
 
     private CallbackContext callbackContext;
@@ -39,14 +43,6 @@ public class StreamingVideoLive extends CordovaPlugin {
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
         return runSwitch(action, args);
-/*
-        if (STEAMING_START.equals(action)) {
-            return this.stream();
-        }  else {
-            callbackContext.error("streamingVideoLive." + action + " is not a supported method.");
-            return false;
-        }
-        */
     }
 
     public boolean runSwitch(String action, JSONArray args) {
@@ -105,8 +101,9 @@ public class StreamingVideoLive extends CordovaPlugin {
 
     public boolean hasPermission() {
         return ( cordova.hasPermission(CAMERA) &&
-            cordova.hasPermission(FLASHLIGHT) &&
-            cordova.hasPermission(RECORD_AUDIO))
+            cordova.hasPermission(RECORD_AUDIO) &&
+            cordova.hasPermission(WRITE_EXTERNAL_STORAGE)
+        );
     }
 
     private void readPermission(int requestCode) {

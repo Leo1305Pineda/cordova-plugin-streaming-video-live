@@ -5,7 +5,7 @@ Plugin for streaming on live.
 ## Usage #
 
 ```typescript
-  import { StreamingVideoLive, StreamingVideoLiveOptions } from '@ionic-native/streaming-video-live/ngx'';
+  import { StreamingVideoLive, StreamingVideoLiveOptions } from '@ionic-native/streaming-video-live/ngx';
  
   constructor(private streamingVideoLive: StreamingVideoLive) { }
  

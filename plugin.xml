@@ -65,6 +65,10 @@
             target-dir="res/values" />
 
         <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/values/style.xml" 
+            target-dir="res/values" />
+
+        <source-file 
             src="src/com/streamingvideolive/cordova/plugins/raw/simple_vertex.glsl" 
             target-dir="res/raw" />
         <source-file 
@@ -82,8 +86,9 @@
             parent="/manifest/application">
             <activity
                 android:name="com.streamingvideolive.cordova.plugins.StreamRTSP"
-                android:screenOrientation="portrait"
-                android:label="Stream RTSP"></activity>
+                android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
+                android:screenOrientation="portrait">        
+            </activity>
         </config-file>
         <source-file 
             src="src/com/streamingvideolive/cordova/plugins/StreamRTSP.java" 
