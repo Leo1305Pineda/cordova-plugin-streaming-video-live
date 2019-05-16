@@ -14,7 +14,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
-import io.ionic.starter.R;
+import com.zaga.taxy.R;
 
 /**
  * Created leonardo pineda on 30/01/19.

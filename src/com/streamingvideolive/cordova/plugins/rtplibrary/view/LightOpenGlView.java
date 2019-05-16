@@ -12,7 +12,7 @@ import com.streamingvideolive.cordova.plugins.encoder.input.gl.render.SimpleCame
 import com.streamingvideolive.cordova.plugins.encoder.input.gl.render.filters.BaseFilterRender;
 import com.streamingvideolive.cordova.plugins.encoder.utils.gl.GlUtil;
 
-import io.ionic.starter.R;
+import com.zaga.taxy.R;
 
 /**
  * Created leonardo pineda on 28/01/19.

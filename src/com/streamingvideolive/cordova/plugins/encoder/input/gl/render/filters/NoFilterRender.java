@@ -8,7 +8,7 @@ import android.support.annotation.RequiresApi;
 import com.streamingvideolive.cordova.plugins.encoder.utils.gl.GlUtil;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import io.ionic.starter.R;
+import com.zaga.taxy.R;
 
 /**
  * Created leonardo pineda on 28/01/19.
