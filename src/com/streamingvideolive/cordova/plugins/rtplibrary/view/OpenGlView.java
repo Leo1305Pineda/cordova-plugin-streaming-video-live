@@ -12,8 +12,6 @@ import com.streamingvideolive.cordova.plugins.encoder.input.gl.render.ManagerRen
 import com.streamingvideolive.cordova.plugins.encoder.input.gl.render.filters.BaseFilterRender;
 import com.streamingvideolive.cordova.plugins.encoder.utils.gl.GlUtil;
 
-import com.zaga.taxy.R;
-
 /**
  * Created leonardo pineda on 28/01/19.
  */
@@ -34,13 +32,14 @@ public class OpenGlView extends OpenGlViewBase {
 
   public OpenGlView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.OpenGlView);
+    int id = context.getResources().getIdentifier("OpenGlView","styleable",context.getPackageName());
+    TypedArray typedArray = context.obtainStyledAttributes(attrs, context.getResources().getIntArray(id));
     try {
-      keepAspectRatio = typedArray.getBoolean(R.styleable.OpenGlView_keepAspectRatio, false);
-      AAEnabled = typedArray.getBoolean(R.styleable.OpenGlView_AAEnabled, false);
-      ManagerRender.numFilters = typedArray.getInt(R.styleable.OpenGlView_numFilters, 1);
-      isFlipHorizontal = typedArray.getBoolean(R.styleable.OpenGlView_isFlipHorizontal, false);
-      isFlipVertical = typedArray.getBoolean(R.styleable.OpenGlView_isFlipVertical, false);
+      keepAspectRatio = typedArray.getBoolean(context.getResources().getIdentifier("OpenGlView_keepAspectRatio","styleable",context.getPackageName()), false);
+      AAEnabled = typedArray.getBoolean(context.getResources().getIdentifier("OpenGlView_AAEnabled","styleable",context.getPackageName()), false);
+      ManagerRender.numFilters = typedArray.getInt(context.getResources().getIdentifier("OpenGlView_numFilters","styleable",context.getPackageName()), 1);
+      isFlipHorizontal = typedArray.getBoolean(context.getResources().getIdentifier("OpenGlView_isFlipHorizontal","styleable",context.getPackageName()), false);
+      isFlipVertical = typedArray.getBoolean(context.getResources().getIdentifier("OpenGlView_isFlipVertical","styleable",context.getPackageName()), false);
     } finally {
       typedArray.recycle();
     }

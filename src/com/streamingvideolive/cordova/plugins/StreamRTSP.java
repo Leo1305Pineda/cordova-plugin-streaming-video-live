@@ -22,8 +22,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import com.zaga.taxy.R;
-
 /**
  * More documentation see:
  * Created leonardo pineda on 29/01/19.
@@ -33,6 +31,7 @@ import com.zaga.taxy.R;
 public class StreamRTSP extends Activity
   implements ConnectCheckerRtsp, View.OnClickListener, SurfaceHolder.Callback{
 
+  private String appResourcesPackage;
   private RtspCamera1 rtspCamera1;
   private Button button;
   private Button bRecord;
@@ -45,16 +44,17 @@ public class StreamRTSP extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+      appResourcesPackage = this.getPackageName();
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-      setContentView(R.layout.activity_stream_rtsp); //R.layout.activity_example
-      SurfaceView surfaceView = findViewById(R.id.surfaceView);
-      button = findViewById(R.id.b_start_stop);
+      setContentView(getResources().getIdentifier("activity_stream_rtsp", "layout", appResourcesPackage)); //R.layout.activity_example
+      SurfaceView surfaceView = findViewById(getResources().getIdentifier("surfaceView", "id", appResourcesPackage));
+      button = findViewById(getResources().getIdentifier("b_start_stop", "id", appResourcesPackage));
       button.setOnClickListener(this);
-      bRecord = findViewById(R.id.b_record);
+      bRecord = findViewById(getResources().getIdentifier("b_record", "id", appResourcesPackage));
       bRecord.setOnClickListener(this);
-      Button switchCamera = findViewById(R.id.switch_camera);
+      Button switchCamera = findViewById(getResources().getIdentifier("switch_camera", "id", appResourcesPackage));
       switchCamera.setOnClickListener(this);
-      etUrl = findViewById(R.id.et_rtp_url);
+      etUrl = findViewById(getResources().getIdentifier("et_rtp_url", "id", appResourcesPackage));
       etUrl.setHint("rtsp://yourendpoint");
       rtspCamera1 = new RtspCamera1(surfaceView, this);
       surfaceView.getHolder().addCallback(this);
@@ -144,30 +144,27 @@ public class StreamRTSP extends Activity
 
   @Override
   public void onClick(View view) {
-    switch (view.getId()) {
-      case R.id.b_start_stop:
+      if (getResources().getIdentifier("b_start_stop", "id", appResourcesPackage) == view.getId()) {
         if (!rtspCamera1.isStreaming()) {
           if (rtspCamera1.isRecording()
-            || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
+                  || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
             button.setText("stop stream");
             rtspCamera1.startStream(etUrl.getText().toString());
           } else {
             Toast.makeText(this, "Error preparing stream, This device cant do it",
-              Toast.LENGTH_SHORT).show();
+                    Toast.LENGTH_SHORT).show();
           }
         } else {
           button.setText("start stream");
           rtspCamera1.stopStream();
         }
-        break;
-      case R.id.switch_camera:
+      } else if (getResources().getIdentifier("switch_camera", "id", appResourcesPackage) == view.getId()) {
         try {
           rtspCamera1.switchCamera();
         } catch (CameraOpenException e) {
           Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-        break;
-      case R.id.b_record:
+      } else if (getResources().getIdentifier("b_record", "id", appResourcesPackage) == view.getId()) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
           if (!rtspCamera1.isRecording()) {
             try {
@@ -179,16 +176,16 @@ public class StreamRTSP extends Activity
               if (!rtspCamera1.isStreaming()) {
                 if (rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
                   rtspCamera1.startRecord(
-                    folder.getAbsolutePath() + "/" + currentDateAndTime + ".mp4");
+                          folder.getAbsolutePath() + "/" + currentDateAndTime + ".mp4");
                   bRecord.setText("stop record");
                   Toast.makeText(this, "Recording... ", Toast.LENGTH_SHORT).show();
                 } else {
                   Toast.makeText(this, "Error preparing stream, This device cant do it",
-                    Toast.LENGTH_SHORT).show();
+                          Toast.LENGTH_SHORT).show();
                 }
               } else {
                 rtspCamera1.startRecord(
-                  folder.getAbsolutePath() + "/" + currentDateAndTime + ".mp4");
+                        folder.getAbsolutePath() + "/" + currentDateAndTime + ".mp4");
                 bRecord.setText("stop record");
                 Toast.makeText(this, "Recording... ", Toast.LENGTH_SHORT).show();
               }
@@ -201,17 +198,14 @@ public class StreamRTSP extends Activity
             rtspCamera1.stopRecord();
             bRecord.setText("stop record");
             Toast.makeText(this,
-              "file " + currentDateAndTime + ".mp4 saved in " + folder.getAbsolutePath(),
-              Toast.LENGTH_SHORT).show();
+                    "file " + currentDateAndTime + ".mp4 saved in " + folder.getAbsolutePath(),
+                    Toast.LENGTH_SHORT).show();
           }
         } else {
           Toast.makeText(this, "You need min JELLY_BEAN_MR2(API 18) for do it...",
-            Toast.LENGTH_SHORT).show();
+                  Toast.LENGTH_SHORT).show();
         }
-        break;
-      default:
-        break;
-    }
+      }
   }
 
 }

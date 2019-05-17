@@ -12,8 +12,6 @@ import com.streamingvideolive.cordova.plugins.encoder.input.gl.render.SimpleCame
 import com.streamingvideolive.cordova.plugins.encoder.input.gl.render.filters.BaseFilterRender;
 import com.streamingvideolive.cordova.plugins.encoder.utils.gl.GlUtil;
 
-import com.zaga.taxy.R;
-
 /**
  * Created leonardo pineda on 28/01/19.
  *
@@ -33,11 +31,12 @@ public class LightOpenGlView extends OpenGlViewBase {
 
   public LightOpenGlView(Context context, AttributeSet attrs) {
     super(context, attrs);
-    TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LightOpenGlView);
+    int id = context.getResources().getIdentifier("LightOpenGlView","styleable",context.getPackageName());
+    TypedArray typedArray = context.obtainStyledAttributes(attrs, context.getResources().getIntArray(id));
     try {
-      keepAspectRatio = typedArray.getBoolean(R.styleable.LightOpenGlView_keepAspectRatio, false);
-      isFlipHorizontal = typedArray.getBoolean(R.styleable.LightOpenGlView_isFlipHorizontal, false);
-      isFlipVertical = typedArray.getBoolean(R.styleable.LightOpenGlView_isFlipVertical, false);
+      keepAspectRatio = typedArray.getBoolean(context.getResources().getIdentifier("LightOpenGlView_keepAspectRatio", "styleable",context.getPackageName()), false);
+      isFlipHorizontal = typedArray.getBoolean(context.getResources().getIdentifier("LightOpenGlView_isFlipHorizontal", "styleable",context.getPackageName()), false);
+      isFlipVertical = typedArray.getBoolean(context.getResources().getIdentifier("LightOpenGlView_isFlipVertical", "styleable",context.getPackageName()), false);
     } finally {
       typedArray.recycle();
     }

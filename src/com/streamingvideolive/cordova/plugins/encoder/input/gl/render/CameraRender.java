@@ -12,7 +12,6 @@ import com.streamingvideolive.cordova.plugins.encoder.input.video.CameraHelper;
 import com.streamingvideolive.cordova.plugins.encoder.utils.gl.GlUtil;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import com.zaga.taxy.R;
 
 /**
  * Created leonardo pineda on 28/01/19.
@@ -51,8 +50,9 @@ public class CameraRender extends BaseRenderOffScreen {
     this.width = width;
     this.height = height;
     GlUtil.checkGlError("initGl start");
-    String vertexShader = GlUtil.getStringFromRaw(context, R.raw.simple_vertex);
-    String fragmentShader = GlUtil.getStringFromRaw(context, R.raw.camera_fragment);
+    String vertexShader = GlUtil.getStringFromRaw(context, context.getResources().getIdentifier("simple_vertex", "raw", context.getPackageName()));
+    int camera_fragment = context.getResources().getIdentifier("camera_fragment", "raw", context.getPackageName());
+    String fragmentShader = GlUtil.getStringFromRaw(context, camera_fragment);
 
     program = GlUtil.createProgram(vertexShader, fragmentShader);
     aPositionHandle = GLES20.glGetAttribLocation(program, "aPosition");

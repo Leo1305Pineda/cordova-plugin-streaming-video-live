@@ -8,7 +8,6 @@ import android.support.annotation.RequiresApi;
 import com.streamingvideolive.cordova.plugins.encoder.utils.gl.GlUtil;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import com.zaga.taxy.R;
 
 /**
  * Created leonardo pineda on 28/01/19.
@@ -44,8 +43,8 @@ public class NoFilterRender extends BaseFilterRender {
 
   @Override
   protected void initGlFilter(Context context) {
-    String vertexShader = GlUtil.getStringFromRaw(context, R.raw.simple_vertex);
-    String fragmentShader = GlUtil.getStringFromRaw(context, R.raw.simple_fragment);
+    String vertexShader = GlUtil.getStringFromRaw(context, context.getResources().getIdentifier("simple_vertex",  "raw", context.getPackageName()));
+    String fragmentShader = GlUtil.getStringFromRaw(context, context.getResources().getIdentifier("simple_fragment", "raw", context.getPackageName()));
 
     program = GlUtil.createProgram(vertexShader, fragmentShader);
     aPositionHandle = GLES20.glGetAttribLocation(program, "aPosition");
