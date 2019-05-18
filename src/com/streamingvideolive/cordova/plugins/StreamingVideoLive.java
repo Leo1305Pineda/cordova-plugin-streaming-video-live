@@ -13,7 +13,6 @@ import android.util.Log;
 import android.util.TypedValue;
 
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -34,7 +33,6 @@ public class StreamingVideoLive extends CordovaPlugin {
 
     private static final String STEAMING_START = "streaming";
     private static final String STEAMING_POWER_OFF = "powerOff";
-    private static final String RESIZE = "resize";
 
     private static final int ACTIVITY_CODE_STREAM = 7;
 
@@ -62,7 +60,6 @@ public class StreamingVideoLive extends CordovaPlugin {
     private boolean runSwitch(String action, JSONArray args) {
         _action = action;
         _args = args;
-        Toast.makeText(cordova.getActivity(), "options: " + args.toString(), Toast.LENGTH_LONG).show();
         if(hasPermission()) {
             switch (action) {
                 case STEAMING_START:
@@ -80,15 +77,6 @@ public class StreamingVideoLive extends CordovaPlugin {
                     }
                     break;
                 case STEAMING_POWER_OFF: stopPreview(callbackContext);
-                    break;
-                case RESIZE:
-                    try {
-                        JSONObject options = args.getJSONObject(0);
-                        resize(callbackContext, options.getJSONObject("preview"));
-                     } catch (JSONException e) {
-                        e.printStackTrace();
-                        callbackContext.error(e.toString());
-                    }
                     break;
                 default: callbackContext.error("streamingVideoLive." + action + " is not a supported method.");
                     break;
@@ -207,27 +195,6 @@ public class StreamingVideoLive extends CordovaPlugin {
             callbackContext.success();
         } else {
             callbackContext.error("streaming is not initialized");
-        }
-    }
-
-    private void resize(CallbackContext callbackContext, JSONObject preview) {
-        if (fragment != null) {
-            int x = 0;
-            int y = 0;
-            int width = 500;
-            int height = 500;
-            try {
-                x = (int) preview.getDouble("x");
-                y = (int) preview.getDouble("y");
-                width = (int) preview.getDouble("width");
-                height = (int) preview.getDouble("height");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            fragment.resize(x, y, width, height);
-            callbackContext.success();
-        } else {
-            callbackContext.error("enable resize");
         }
     }
 

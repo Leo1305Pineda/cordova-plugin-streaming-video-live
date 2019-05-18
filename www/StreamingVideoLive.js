@@ -10,10 +10,6 @@ StreamingVideoLive.prototype.powerOff = function(successCallback, errorCallback)
   cordova.exec(successCallback, errorCallback, PLUGIN_NAME, 'powerOff', []);
 };
 
-StreamingVideoLive.prototype.resize = function(preview) {
-  cordova.exec(null, null, PLUGIN_NAME, 'resize', [preview]);
-};
-
 if (!window.plugins) {
   window.plugins = {};
 }

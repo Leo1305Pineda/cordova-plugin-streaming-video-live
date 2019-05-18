@@ -4,7 +4,9 @@ import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -26,6 +28,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, View.OnClickListener, SurfaceHolder.Callback {
+
         private View view;
         public FrameLayout frameContainerLayout;
         public FrameLayout mainLayout;
@@ -81,6 +84,8 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
                 mainLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
                 mainLayout.addView(mPreview);
                 mainLayout.setEnabled(false);
+
+                setupTouchAndBackButton();
             }
             return view;
         }
@@ -90,17 +95,6 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
             this.y = y;
             this.width = width;
             this.height = height;
-        }
-
-        public void resize(int x, int y, int width, int height) {
-            if (layoutParams == null) {
-                layoutParams = new FrameLayout.LayoutParams(width, height);
-                layoutParams.setMargins(x, y, 0, 0);
-            } else {
-                layoutParams.width = width;
-                layoutParams.height = height;
-                layoutParams.setMargins(x, y, 0, 0);
-            }
         }
 
         @Override
@@ -242,5 +236,71 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
                     Toast.makeText(getActivity(), "You need min JELLY_BEAN_MR2(API 18) for do it...", Toast.LENGTH_SHORT).show();
                 }
             }
+        }
+
+        private void setupTouchAndBackButton() {
+
+            final GestureDetector gestureDetector = new GestureDetector(getActivity().getApplicationContext(), new TapGestureDetector());
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    frameContainerLayout.setClickable(false);
+                    frameContainerLayout.setOnTouchListener(new View.OnTouchListener() {
+
+                        private int mLastTouchX;
+                        private int mLastTouchY;
+                        private int mPosX = 0;
+                        private int mPosY = 0;
+
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) frameContainerLayout.getLayoutParams();
+                            boolean isSingleTapTouch = gestureDetector.onTouchEvent(event);
+                            if (event.getAction() != MotionEvent.ACTION_MOVE && isSingleTapTouch) {
+                                return true;
+                            } else {
+                                int x;
+                                int y;
+                                switch (event.getAction()) {
+                                    case MotionEvent.ACTION_DOWN:
+                                        if (mLastTouchX == 0 || mLastTouchY == 0) {
+                                            mLastTouchX = (int) event.getRawX() - layoutParams.leftMargin;
+                                            mLastTouchY = (int) event.getRawY() - layoutParams.topMargin;
+                                        } else {
+                                            mLastTouchX = (int) event.getRawX();
+                                            mLastTouchY = (int) event.getRawY();
+                                        }
+                                        break;
+                                    case MotionEvent.ACTION_MOVE:
+                                        x = (int) event.getRawX();
+                                        y = (int) event.getRawY();
+
+                                        final float dx = x - mLastTouchX;
+                                        final float dy = y - mLastTouchY;
+
+                                        mPosX += dx;
+                                        mPosY += dy;
+
+                                        layoutParams.leftMargin = mPosX;
+                                        layoutParams.topMargin = mPosY;
+
+                                        frameContainerLayout.setLayoutParams(layoutParams);
+
+                                        // Remember this touch position for the next move event
+                                        mLastTouchX = x;
+                                        mLastTouchY = y;
+
+                                        break;
+                                    default: break;
+                                }
+                            }
+                            return true;
+                        }
+                    });
+                    frameContainerLayout.setFocusableInTouchMode(true);
+                    frameContainerLayout.requestFocus();
+                }
+            });
         }
     }
