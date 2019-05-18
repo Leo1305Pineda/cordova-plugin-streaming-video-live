@@ -29,6 +29,8 @@ import java.util.Locale;
 
 public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, View.OnClickListener, SurfaceHolder.Callback {
 
+        private static final String TAG = StreamingFragment.class.getSimpleName();
+
         private View view;
         public FrameLayout frameContainerLayout;
         public FrameLayout mainLayout;
@@ -51,7 +53,9 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
 
         private FrameLayout.LayoutParams layoutParams;
 
-        @Override
+        private String urlStream = "";
+
+    @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             appResourcesPackage =  getActivity().getPackageName();
@@ -67,7 +71,9 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
                 switchCamera.setOnClickListener(this);
                 etUrl = view.findViewById(getResources().getIdentifier("et_rtp_url", "id", appResourcesPackage));
                 etUrl.setHint("rtsp://yourendpoint");
-
+                if (!urlStream.equals("")) {
+                    etUrl.setText(urlStream);
+                }
                 rtspCamera1 = new RtspCamera1(surfaceView, this);
                 surfaceView.getHolder().addCallback(this);
 
@@ -303,4 +309,8 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
                 }
             });
         }
+
+    public void setUrlStream(String urlStream) {
+            this.urlStream = urlStream;
     }
+}
