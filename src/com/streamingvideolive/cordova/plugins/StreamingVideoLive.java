@@ -8,6 +8,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,6 +23,8 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Iterator;
 
 public class StreamingVideoLive extends CordovaPlugin {
 
@@ -96,31 +99,27 @@ public class StreamingVideoLive extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
                 final Intent streamIntent = new Intent(cordovaObj.getActivity().getApplicationContext(), StreamRTSP.class);
-
-                /*
                 Bundle extras = new Bundle();
-                extras.putString("mediaUrl", url);
-
-                if (options != null) {
+                extras.putString("urlStream", urlStream);
+                if (_args != null) {
+                    JSONObject options = _args.optJSONObject(1);
                     Iterator<String> optKeys = options.keys();
                     while (optKeys.hasNext()) {
                         try {
-                            final String optKey = (String)optKeys.next();
+                            final String optKey = (String) optKeys.next();
                             if (options.get(optKey).getClass().equals(String.class)) {
-                                extras.putString(optKey, (String)options.get(optKey));
-                                Log.v(TAG, "Added option: " + optKey + " -> " + String.valueOf(options.get(optKey)));
+                                extras.putString(optKey, (String) options.get(optKey));
+                                Log.e(TAG, "Added option: " + optKey + " -> " + options.get(optKey));
                             } else if (options.get(optKey).getClass().equals(Boolean.class)) {
-                                extras.putBoolean(optKey, (Boolean)options.get(optKey));
-                                Log.v(TAG, "Added option: " + optKey + " -> " + String.valueOf(options.get(optKey)));
+                                extras.putBoolean(optKey, (Boolean) options.get(optKey));
+                                Log.e(TAG, "Added option: " + optKey + " -> " + options.get(optKey));
                             }
-
                         } catch (JSONException e) {
                             Log.e(TAG, "JSONException while trying to read options. Skipping option.");
                         }
                     }
                     streamIntent.putExtras(extras);
-                }*/
-
+                }
                 cordovaObj.startActivityForResult(plugin, streamIntent, ACTIVITY_CODE_STREAM);
             }
         });

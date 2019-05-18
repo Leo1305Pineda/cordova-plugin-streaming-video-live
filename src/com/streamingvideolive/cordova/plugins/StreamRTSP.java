@@ -1,9 +1,11 @@
 package com.streamingvideolive.cordova.plugins;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -22,20 +24,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static android.view.View.*;
+
 /**
  * More documentation see:
  * Created leonardo pineda on 29/01/19.
  * {@link com.streamingvideolive.cordova.plugins.rtplibrary.base.Camera1Base}
  * {@link com.streamingvideolive.cordova.plugins.rtplibrary.rtsp.RtspCamera1}
  */
-public class StreamRTSP extends Activity
-  implements ConnectCheckerRtsp, View.OnClickListener, SurfaceHolder.Callback{
+public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickListener, SurfaceHolder.Callback{
 
+  private static String TAG = StreamRTSP.class.getSimpleName();
   private String appResourcesPackage;
   private RtspCamera1 rtspCamera1;
   private Button button;
   private Button bRecord;
   private EditText etUrl;
+  private String urlStream;
 
   private String currentDateAndTime = "";
   private File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
@@ -56,6 +61,19 @@ public class StreamRTSP extends Activity
       switchCamera.setOnClickListener(this);
       etUrl = findViewById(getResources().getIdentifier("et_rtp_url", "id", appResourcesPackage));
       etUrl.setHint("rtsp://yourendpoint");
+      Intent intent = getIntent();
+      Bundle extras = intent.getExtras();
+
+      Log.e(TAG, "etUrl visible: " + extras.getString("etUrl"));
+      if (extras.getBoolean("etUrl")) {
+        etUrl.setVisibility(VISIBLE);
+      } else {
+        etUrl.setVisibility(INVISIBLE);
+      }
+
+      Log.i(TAG, "connected to: " + extras.getString("urlStream"));
+      urlStream = extras.getString("urlStream");
+      etUrl.setText(urlStream);
       rtspCamera1 = new RtspCamera1(surfaceView, this);
       surfaceView.getHolder().addCallback(this);
     }
@@ -102,6 +120,7 @@ public class StreamRTSP extends Activity
     runOnUiThread(new Runnable() {
       @Override
       public void run() {
+        Log.e(TAG, "Connection failed. " + reason);
         Toast.makeText(StreamRTSP.this, "Connection failed. " + reason, Toast.LENGTH_SHORT)
           .show();
         rtspCamera1.stopStream();
@@ -146,13 +165,14 @@ public class StreamRTSP extends Activity
   public void onClick(View view) {
       if (getResources().getIdentifier("b_start_stop", "id", appResourcesPackage) == view.getId()) {
         if (!rtspCamera1.isStreaming()) {
-          if (rtspCamera1.isRecording()
-                  || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
+          if (rtspCamera1.isRecording() || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
             button.setText("stop stream");
+
+            Log.e(TAG," etUrl.getText().toString() " + etUrl.getText().toString());
+
             rtspCamera1.startStream(etUrl.getText().toString());
           } else {
-            Toast.makeText(this, "Error preparing stream, This device cant do it",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Error preparing stream, This device cant do it", Toast.LENGTH_SHORT).show();
           }
         } else {
           button.setText("start stream");

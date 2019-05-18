@@ -95,8 +95,7 @@ public class RtspClient {
       tlsEnabled = rtspMatcher.group(0).startsWith("rtsps");
     } else {
       streaming = false;
-      connectCheckerRtsp.onConnectionFailedRtsp(
-          "Endpoint malformed, should be: rtsp://ip:port/appname/streamname");
+      connectCheckerRtsp.onConnectionFailedRtsp("Endpoint malformed, should be: " + url);
       return;
     }
     host = rtspMatcher.group(1);
