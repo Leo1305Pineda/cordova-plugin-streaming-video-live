@@ -41,6 +41,9 @@
             <uses-feature android:name="android.hardware.camera2.autofocus"/>
         </config-file>
 
+        <preference name="ANDROID_SUPPORT_LIBRARY_VERSION" default="25+"/>
+        <framework src="com.android.support:exifinterface:$ANDROID_SUPPORT_LIBRARY_VERSION" />
+
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="StreamingVideoLive" >
                 <param 
@@ -55,6 +58,11 @@
         <source-file 
             src="src/com/streamingvideolive/cordova/plugins/layout/activity_stream_rtsp.xml" 
             target-dir="res/layout" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/layout/fragment_stream_rtsp.xml" 
+            target-dir="res/layout" />
+
 
         <source-file 
             src="src/com/streamingvideolive/cordova/plugins/values/attrs.xml" 
@@ -90,8 +98,25 @@
                 android:screenOrientation="portrait">        
             </activity>
         </config-file>
+
         <source-file 
             src="src/com/streamingvideolive/cordova/plugins/StreamRTSP.java" 
+            target-dir="src/com/streamingvideolive/cordova/plugins" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/CustomSurfaceView.java" 
+            target-dir="src/com/streamingvideolive/cordova/plugins" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/Preview.java" 
+            target-dir="src/com/streamingvideolive/cordova/plugins" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/StreamingFragment.java" 
+            target-dir="src/com/streamingvideolive/cordova/plugins" />
+
+        <source-file 
+            src="src/com/streamingvideolive/cordova/plugins/TapGestureDetector.java" 
             target-dir="src/com/streamingvideolive/cordova/plugins" />
 
         <!-- target-dir rtplibrary base -->

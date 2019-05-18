@@ -4,9 +4,16 @@ import android.Manifest;
 import android.content.Intent;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 
 import android.content.pm.PackageManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -15,25 +22,32 @@ import org.apache.cordova.PluginResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class StreamingVideoLive extends CordovaPlugin {
 
     private static final String TAG = StreamingVideoLive.class.getSimpleName();
 
+    private StreamingFragment fragment = null;
+    private int containerViewId = 20;
+    private String urlStream;
+
     private static final String STEAMING_START = "streaming";
+    private static final String STEAMING_POWER_OFF = "powerOff";
+    private static final String RESIZE = "resize";
 
     private static final int ACTIVITY_CODE_STREAM = 7;
 
-    private static final String CAMERA          = Manifest.permission.CAMERA;
-    private static final String RECORD_AUDIO    = Manifest.permission.RECORD_AUDIO;
+    private static final String CAMERA = Manifest.permission.CAMERA;
+    private static final String RECORD_AUDIO = Manifest.permission.RECORD_AUDIO;
     private static final String WRITE_EXTERNAL_STORAGE = Manifest.permission.WRITE_EXTERNAL_STORAGE;
     private static final String PERMISSION_DENIED_ERROR = "Permissions denied.";
     private static final int REQ_CODE = 500;
 
     private String[] permissions = {
-        CAMERA,
-        RECORD_AUDIO,
-        WRITE_EXTERNAL_STORAGE
+            CAMERA,
+            RECORD_AUDIO,
+            WRITE_EXTERNAL_STORAGE
     };
 
     private CallbackContext callbackContext;
@@ -45,29 +59,55 @@ public class StreamingVideoLive extends CordovaPlugin {
         return runSwitch(action, args);
     }
 
-    public boolean runSwitch(String action, JSONArray args) {
+    private boolean runSwitch(String action, JSONArray args) {
         _action = action;
         _args = args;
+        Toast.makeText(cordova.getActivity(), "options: " + args.toString(), Toast.LENGTH_LONG).show();
         if(hasPermission()) {
             switch (action) {
-                case STEAMING_START: streamRTSP(StreamRTSP.class);
-                return true;
+                case STEAMING_START:
+                    try {
+                        JSONObject options = args.getJSONObject(1);
+                        urlStream = args.getString(0);
+                        if (options.getString("mode").equals("fragment")) {
+                            streamPreview(options.getJSONObject("preview"));
+                        } else {
+                            streamRTSP();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        callbackContext.error(e.toString());
+                    }
+                    break;
+                case STEAMING_POWER_OFF: stopPreview(callbackContext);
+                    break;
+                case RESIZE:
+                    try {
+                        JSONObject options = args.getJSONObject(0);
+                        resize(callbackContext, options.getJSONObject("preview"));
+                     } catch (JSONException e) {
+                        e.printStackTrace();
+                        callbackContext.error(e.toString());
+                    }
+                    break;
+                default: callbackContext.error("streamingVideoLive." + action + " is not a supported method.");
+                    break;
             }
         } else {
             readPermission(REQ_CODE);
             return true;
         }
-        callbackContext.error("streamingVideoLive." + action + " is not a supported method.");
-        return false; 
+        callbackContext.error("streamingVideoLive." + action + " is not permission");
+        return false;
     }
 
-    private boolean streamRTSP(final Class activityClass) {
+    private void streamRTSP() {
         final CordovaInterface cordovaObj = cordova;
         final CordovaPlugin plugin = this;
 
         cordova.getActivity().runOnUiThread(new Runnable() {
             public void run() {
-                final Intent streamIntent = new Intent(cordovaObj.getActivity().getApplicationContext(), activityClass);
+                final Intent streamIntent = new Intent(cordovaObj.getActivity().getApplicationContext(), StreamRTSP.class);
 
                 /*
                 Bundle extras = new Bundle();
@@ -96,13 +136,105 @@ public class StreamingVideoLive extends CordovaPlugin {
                 cordovaObj.startActivityForResult(plugin, streamIntent, ACTIVITY_CODE_STREAM);
             }
         });
-        return true;
+    }
+
+    private void streamPreview(JSONObject preview) {
+        Log.d(TAG, "streamPreview: " + preview.toString());
+        if (fragment != null) {
+            callbackContext.error("stream already started in " + urlStream );
+        }
+
+        final float opacity = Float.parseFloat("1");
+
+        fragment = new StreamingFragment();
+
+        DisplayMetrics metrics = cordova.getActivity().getResources().getDisplayMetrics();
+        // offset
+        float x = 0;
+        float y = 0;
+        float width = 500;
+        float height = 500;
+        try {
+            x = (float) preview.getDouble("x");
+            y = (float) preview.getDouble("y");
+            width = (float) preview.getDouble("width");
+            height = (float) preview.getDouble("height");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        int computedX = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, x, metrics);
+        int computedY = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, y, metrics);
+
+        // size
+        int computedWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width, metrics);
+        int computedHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, height, metrics);
+
+        fragment.setRect(computedX, computedY, computedWidth, computedHeight);
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //create or update the layout params for the container view
+                FrameLayout containerView = (FrameLayout) cordova.getActivity().findViewById(containerViewId);
+                if(containerView == null){
+                    containerView = new FrameLayout(cordova.getActivity().getApplicationContext());
+                    containerView.setId(containerViewId);
+
+                    FrameLayout.LayoutParams containerLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+                    cordova.getActivity().addContentView(containerView, containerLayoutParams);
+                }
+                //display camera bellow the webview
+                containerView.setAlpha(opacity);
+                containerView.bringToFront();
+
+                //add the fragment to the container
+                FragmentManager fragmentManager = cordova.getActivity().getFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.add(containerView.getId(), fragment);
+                fragmentTransaction.commit();
+            }
+        });
+    }
+
+    private void stopPreview(CallbackContext callbackContext) {
+        if (fragment != null) {
+            FragmentManager fragmentManager = cordova.getActivity().getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.remove(fragment);
+            fragmentTransaction.commit();
+            fragment = null;
+            callbackContext.success();
+        } else {
+            callbackContext.error("streaming is not initialized");
+        }
+    }
+
+    private void resize(CallbackContext callbackContext, JSONObject preview) {
+        if (fragment != null) {
+            int x = 0;
+            int y = 0;
+            int width = 500;
+            int height = 500;
+            try {
+                x = (int) preview.getDouble("x");
+                y = (int) preview.getDouble("y");
+                width = (int) preview.getDouble("width");
+                height = (int) preview.getDouble("height");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            fragment.resize(x, y, width, height);
+            callbackContext.success();
+        } else {
+            callbackContext.error("enable resize");
+        }
     }
 
     public boolean hasPermission() {
         return ( cordova.hasPermission(CAMERA) &&
-            cordova.hasPermission(RECORD_AUDIO) &&
-            cordova.hasPermission(WRITE_EXTERNAL_STORAGE)
+                cordova.hasPermission(RECORD_AUDIO) &&
+                cordova.hasPermission(WRITE_EXTERNAL_STORAGE)
         );
     }
 
