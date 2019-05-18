@@ -129,11 +129,14 @@ public class StreamingVideoLive extends CordovaPlugin {
         Log.d(TAG, "streamPreview: " + preview.toString());
         if (fragment != null) {
             callbackContext.error("stream already started in " + urlStream );
+            return;
         }
 
         final float opacity = Float.parseFloat("1");
 
         fragment = new StreamingFragment();
+
+        fragment.setUrlStream(urlStream);
 
         DisplayMetrics metrics = cordova.getActivity().getResources().getDisplayMetrics();
         // offset
