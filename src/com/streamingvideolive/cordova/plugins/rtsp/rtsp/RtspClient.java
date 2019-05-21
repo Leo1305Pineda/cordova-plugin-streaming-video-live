@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  */
 public class RtspClient {
 
-  private final String TAG = "RtspClient";
+  private final String TAG = RtspClient.class.getSimpleName();
   private static final Pattern rtspUrlPattern =
       Pattern.compile("^rtsps?://([^/:]+)(?::(\\d+))*/([^/]+)/?([^*]*)$");
 
@@ -86,6 +86,7 @@ public class RtspClient {
   }
 
   public void setToken(String token) {
+    Log.e(TAG, token);
     this.token = token;
   }
 
@@ -222,6 +223,7 @@ public class RtspClient {
             rtspSender.setAudioPorts(audioPorts[0], audioPorts[1]);
             rtspSender.start();
             streaming = true;
+            Log.e(TAG, "Response: " + status);
             connectCheckerRtsp.onConnectionSuccessRtsp();
           } catch (IOException | NullPointerException e) {
             Log.e(TAG, "connection error", e);

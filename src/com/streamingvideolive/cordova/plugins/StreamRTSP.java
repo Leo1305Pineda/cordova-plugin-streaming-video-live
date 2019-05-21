@@ -169,7 +169,9 @@ public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickL
       if (getResources().getIdentifier("b_start_stop", "id", appResourcesPackage) == view.getId()) {
         if (!rtspCamera1.isStreaming()) {
 
-          rtspCamera1.setToken(token);
+          //rtspCamera1.setToken(token);
+
+          rtspCamera1.setAuthorization("leo1305pineda", "123456");
 
           if (rtspCamera1.isRecording() || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
             button.setText("stop stream");
