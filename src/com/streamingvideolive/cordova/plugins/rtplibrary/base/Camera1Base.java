@@ -161,6 +161,13 @@ public abstract class Camera1Base
   public abstract void setAuthorization(String user, String password);
 
   /**
+   * Bearer auth developed to work with JWT.
+   *
+   * @param token auth.
+   */
+  public abstract void setToken(String token);
+
+  /**
    * Call this method before use @startStream. If not you will do a stream without video. NOTE:
    * Rotation with encoder is silence ignored in some devices.
    *

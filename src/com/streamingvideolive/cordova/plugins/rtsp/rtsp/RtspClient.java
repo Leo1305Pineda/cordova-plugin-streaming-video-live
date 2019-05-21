@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 /**
  * Created leonardo pineda on 28/01/19.
  */
-
 public class RtspClient {
 
   private final String TAG = "RtspClient";
@@ -45,6 +44,7 @@ public class RtspClient {
   private String authorization = null;
   private String user;
   private String password;
+  private String token;
   private String sessionId;
   private ConnectCheckerRtsp connectCheckerRtsp;
 
@@ -83,6 +83,10 @@ public class RtspClient {
   public void setAuthorization(String user, String password) {
     this.user = user;
     this.password = password;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
   }
 
   public boolean isStreaming() {
@@ -150,7 +154,7 @@ public class RtspClient {
   public void setIsStereo(boolean isStereo) {
     this.isStereo = isStereo;
   }
-
+  
   public void connect() {
     if (!streaming) {
       rtspSender = new RtspSender(connectCheckerRtsp, protocol, sps, pps, vps, sampleRate);
@@ -379,7 +383,7 @@ public class RtspClient {
         + "\r\n"
         + (sessionId != null ? "Session: " + sessionId + "\r\n" : "")
         // For some reason you may have to remove last "\r\n" in the next line to make the RTSP client work with your wowza server :/
-        + (authorization != null ? "Authorization: " + authorization + "\r\n" : "")
+        + (token != null ? "Authorization: Bearer " + token : (this.authorization != null ? "Authorization: " + authorization + "\r\n" : ""))
         + "\r\n";
   }
 

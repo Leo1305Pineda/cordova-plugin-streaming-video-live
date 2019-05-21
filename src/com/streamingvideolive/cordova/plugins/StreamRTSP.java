@@ -45,8 +45,9 @@ public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickL
   private String currentDateAndTime = "";
   private File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
     + "/rtmp-rtsp-stream-client-java");
+  private String token;
 
-    @Override
+  @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
       appResourcesPackage = this.getPackageName();
@@ -70,6 +71,8 @@ public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickL
       } else {
         etUrl.setVisibility(INVISIBLE);
       }
+
+      token = extras.getString("token");
 
       Log.i(TAG, "connected to: " + extras.getString("urlStream"));
       urlStream = extras.getString("urlStream");
@@ -165,6 +168,9 @@ public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickL
   public void onClick(View view) {
       if (getResources().getIdentifier("b_start_stop", "id", appResourcesPackage) == view.getId()) {
         if (!rtspCamera1.isStreaming()) {
+
+          rtspCamera1.setToken(token);
+
           if (rtspCamera1.isRecording() || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
             button.setText("stop stream");
 
