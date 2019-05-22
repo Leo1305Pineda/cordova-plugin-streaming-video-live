@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -44,7 +45,6 @@ public class RtspClient {
   private String authorization = null;
   private String user;
   private String password;
-  private String token;
   private String sessionId;
   private ConnectCheckerRtsp connectCheckerRtsp;
 
@@ -83,11 +83,6 @@ public class RtspClient {
   public void setAuthorization(String user, String password) {
     this.user = user;
     this.password = password;
-  }
-
-  public void setToken(String token) {
-    Log.e(TAG, token);
-    this.token = token;
   }
 
   public boolean isStreaming() {
@@ -380,12 +375,20 @@ public class RtspClient {
   }
 
   private String addHeaders(String authorization) {
+    String cred = user != null && password !=null  ?  user + ":" + password : null;
+    String auth = null;
+    if (cred != null) {
+      try {
+        auth = "Basic " + Base64.encodeToString(cred.getBytes("UTF-8"), Base64.DEFAULT );
+      } catch (UnsupportedEncodingException e) {
+        e.printStackTrace();
+      }
+    }
     return "CSeq: "
         + (++mCSeq)
         + "\r\n"
         + (sessionId != null ? "Session: " + sessionId + "\r\n" : "")
-        // For some reason you may have to remove last "\r\n" in the next line to make the RTSP client work with your wowza server :/
-        + (token != null ? "Authorization: Bearer " + token : (this.authorization != null ? "Authorization: " + authorization + "\r\n" : ""))
+        + (user != null && password != null ? "Authorization: " + auth + "\r\n" : "")
         + "\r\n";
   }
 

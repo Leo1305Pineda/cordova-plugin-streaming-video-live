@@ -33,6 +33,7 @@ public class StreamingVideoLive extends CordovaPlugin {
     private StreamingFragment fragment = null;
     private int containerViewId = 20;
     private String urlStream;
+    private JSONObject auth;
 
     private static final String STEAMING_START = "streaming";
     private static final String STEAMING_POWER_OFF = "powerOff";
@@ -68,6 +69,7 @@ public class StreamingVideoLive extends CordovaPlugin {
                 case STEAMING_START:
                     try {
                         JSONObject options = args.getJSONObject(1);
+                        auth = options.getJSONObject("auth");
                         urlStream = args.getString(0);
                         if (options.getString("mode").equals("fragment")) {
                             streamPreview(options.getJSONObject("preview"));
@@ -101,6 +103,16 @@ public class StreamingVideoLive extends CordovaPlugin {
                 final Intent streamIntent = new Intent(cordovaObj.getActivity().getApplicationContext(), StreamRTSP.class);
                 Bundle extras = new Bundle();
                 extras.putString("urlStream", urlStream);
+                if (auth != null) {
+                    try {
+                        extras.putString("user", auth.getString("user"));
+                        extras.putString("password", auth.getString("password"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    callbackContext.error("to set auth in options");
+                }
                 if (_args != null) {
                     JSONObject options = _args.optJSONObject(1);
                     Iterator<String> optKeys = options.keys();
@@ -131,13 +143,18 @@ public class StreamingVideoLive extends CordovaPlugin {
             callbackContext.error("stream already started in " + urlStream );
             return;
         }
-
         final float opacity = Float.parseFloat("1");
-
         fragment = new StreamingFragment();
-
         fragment.setUrlStream(urlStream);
-
+        if (auth != null) {
+            try {
+                fragment.setAuth(auth.getString("user"), auth.getString("password"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            callbackContext.error("to set auth in options");
+        }
         DisplayMetrics metrics = cordova.getActivity().getResources().getDisplayMetrics();
         // offset
         float x = 0;

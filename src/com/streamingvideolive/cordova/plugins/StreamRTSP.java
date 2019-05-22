@@ -41,11 +41,12 @@ public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickL
   private Button bRecord;
   private EditText etUrl;
   private String urlStream;
+  private String user;
+  private String password;
 
   private String currentDateAndTime = "";
   private File folder = new File(Environment.getExternalStorageDirectory().getAbsolutePath()
     + "/rtmp-rtsp-stream-client-java");
-  private String token;
 
   @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,8 @@ public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickL
         etUrl.setVisibility(INVISIBLE);
       }
 
-      token = extras.getString("token");
+      user = extras.getString("user");
+      password = extras.getString("password");
 
       Log.i(TAG, "connected to: " + extras.getString("urlStream"));
       urlStream = extras.getString("urlStream");
@@ -168,16 +170,11 @@ public class StreamRTSP extends Activity implements ConnectCheckerRtsp, OnClickL
   public void onClick(View view) {
       if (getResources().getIdentifier("b_start_stop", "id", appResourcesPackage) == view.getId()) {
         if (!rtspCamera1.isStreaming()) {
-
-          //rtspCamera1.setToken(token);
-
-          rtspCamera1.setAuthorization("leo1305pineda", "123456");
-
+          if (user != null && password != null) {
+            rtspCamera1.setAuthorization(user, password);
+          }
           if (rtspCamera1.isRecording() || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
             button.setText("stop stream");
-
-            Log.e(TAG," etUrl.getText().toString() " + etUrl.getText().toString());
-
             rtspCamera1.startStream(etUrl.getText().toString());
           } else {
             Toast.makeText(this, "Error preparing stream, This device cant do it", Toast.LENGTH_SHORT).show();

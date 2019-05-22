@@ -54,6 +54,8 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
         private FrameLayout.LayoutParams layoutParams;
 
         private String urlStream = "";
+        private String user;
+        private String password;
 
     @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -94,6 +96,11 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
                 setupTouchAndBackButton();
             }
             return view;
+        }
+
+        public void setAuth(String user, String password) {
+            this.user = user;
+            this.password = password;
         }
 
         public void setRect(int x, int y, int width, int height) {
@@ -186,6 +193,9 @@ public class StreamingFragment extends Fragment implements ConnectCheckerRtsp, V
         public void onClick(View view) {
             if (getResources().getIdentifier("b_start_stop", "id", appResourcesPackage) == view.getId()) {
                 if (!rtspCamera1.isStreaming()) {
+                    if (user != null && password != null) {
+                        rtspCamera1.setAuthorization(user, password);
+                    }
                     if (rtspCamera1.isRecording()
                             || rtspCamera1.prepareAudio() && rtspCamera1.prepareVideo()) {
                         button.setText("stop stream");

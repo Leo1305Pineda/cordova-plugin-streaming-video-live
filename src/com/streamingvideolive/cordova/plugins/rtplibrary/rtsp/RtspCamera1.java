@@ -74,11 +74,6 @@ public class RtspCamera1 extends Camera1Base {
   }
 
   @Override
-  public void setToken(String token) {
-    rtspClient.setToken(token);
-  }
-
-  @Override
   protected void prepareAudioRtp(boolean isStereo, int sampleRate) {
     rtspClient.setIsStereo(isStereo);
     rtspClient.setSampleRate(sampleRate);
